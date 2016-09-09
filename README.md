@@ -27,4 +27,5 @@ make
 Changes by me (Ernest Yeung)
 ==================================================
 
+- *Added* (entirely *new*) Lesson 1 Code Snippets in [Lesson Code Snippets](https://github.com/ernestyalumni/cs344/tree/master/Lesson%20Code%20Snippets)
 
