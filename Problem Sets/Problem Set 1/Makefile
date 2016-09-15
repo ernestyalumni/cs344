@@ -39,16 +39,22 @@ student: main.o student_func.o compare.o reference_calc.o Makefile
 	$(NVCC) -o HW1 main.o student_func.o compare.o reference_calc.o -L $(OPENCV_LIBPATH) $(OPENCV_LIBS) $(NVCC_OPTS)
 
 main.o: main.cpp timer.h utils.h reference_calc.cpp compare.cpp HW1.cpp
-	g++ -c main.cpp $(GCC_OPTS) -I $(CUDA_INCLUDEPATH) -I $(OPENCV_INCLUDEPATH)
+#	g++ -c main.cpp $(GCC_OPTS) -I $(CUDA_INCLUDEPATH) -I $(OPENCV_INCLUDEPATH)
+	nvcc -c main.cpp $(NVCC_OPTS) -I $(CUDA_INCLUDEPATH) -I $(OPENCV_INCLUDEPATH)
+
 
 student_func.o: student_func.cu utils.h
 	nvcc -c student_func.cu $(NVCC_OPTS)
 
 compare.o: compare.cpp compare.h
-	g++ -c compare.cpp -I $(OPENCV_INCLUDEPATH) $(GCC_OPTS) -I $(CUDA_INCLUDEPATH)
+#	g++ -c compare.cpp -I $(OPENCV_INCLUDEPATH) $(GCC_OPTS) -I $(CUDA_INCLUDEPATH)
+	nvcc -c compare.cpp -I $(OPENCV_INCLUDEPATH) $(NVCC_OPTS) -I $(CUDA_INCLUDEPATH)
+	
 
 reference_calc.o: reference_calc.cpp reference_calc.h
-	g++ -c reference_calc.cpp -I $(OPENCV_INCLUDEPATH) $(GCC_OPTS) -I $(CUDA_INCLUDEPATH)
+#	g++ -c reference_calc.cpp -I $(OPENCV_INCLUDEPATH) $(GCC_OPTS) -I $(CUDA_INCLUDEPATH)
+	nvcc -c reference_calc.cpp -I $(OPENCV_INCLUDEPATH) $(NVCC_OPTS) -I $(CUDA_INCLUDEPATH)
+
 
 clean:
 	rm -f *.o *.png hw
