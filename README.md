@@ -27,5 +27,11 @@ make
 Changes by me (Ernest Yeung)
 ==================================================
 
+# Summary of changes
+
 - *Added* (entirely *new*) Lesson 1 Code Snippets in [Lesson Code Snippets](https://github.com/ernestyalumni/cs344/tree/master/Lesson%20Code%20Snippets)
 
+
+| codename          | directory                      | Keywords      | Description |
+| ----------------- | :----------------------------- | :-----------: | ----------- | 
+| student_func00.cu | `./Problem Sets/Problem Set 1/ | Problem Set 1 | My first attempt before I spent 2.5 months with CUDA C/C++ |
