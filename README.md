@@ -34,10 +34,10 @@ Changes by me (Ernest Yeung)
 
 | codename          | directory                      | Keywords      | Description |
 | ----------------- | :----------------------------- | :-----------: | ----------- | 
-| student_func00.cu | `./Problem Sets/Problem Set 1/ | Problem Set 1 | My first attempt before I spent 2.5 months with CUDA C/C++ (about June 2016) |
-| student_func.cu | `./Problem Sets/Problem Set 2/ | Problem Set 2 | my solution |
-| student_func00.cu | `./Problem Sets/Problem Set 2/ | Problem Set 2 | my solution; has the "naive" gaussian blur method (i.e. from global memory) |
-| Makefile | `./Problem Sets/Problem Set 2/ | Problem Set 2 | changed Makefile to run on my Fedora Linux setup (mostly changed gcc to nvcc compiler, needed for `cuda_runtime.h` |
-| HW2 | `./Problem Sets/Problem Set 2/ | Problem Set 2 | executable for Problem Set 2 for reference (of a working executable) |
+| student_func00.cu | `./Problem Sets/Problem Set 1/` | Problem Set 1 | My first attempt before I spent 2.5 months with CUDA C/C++ (about June 2016) |
+| student_func.cu | `./Problem Sets/Problem Set 2/` | Problem Set 2 | my solution |
+| student_func00.cu | `./Problem Sets/Problem Set 2/` | Problem Set 2 | my solution; has the "naive" gaussian blur method (i.e. from global memory) |
+| Makefile | `./Problem Sets/Problem Set 2/` | Problem Set 2 | changed Makefile to run on my Fedora Linux setup (mostly changed gcc to nvcc compiler, needed for `cuda_runtime.h` |
+| HW2 | `./Problem Sets/Problem Set 2/` | Problem Set 2 | executable for Problem Set 2 for reference (of a working executable) |
 
 
