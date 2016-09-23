@@ -151,4 +151,26 @@ Your code ran in: 1.303168 msecs.
 PASS
 ```
 
-For block sizes greater than 32, we obtain an error.  So it appears that for this "naive" gaussian blur (i.e. only global memory), then setting `dim3 blockSize(16,16)` or `dim3 blockSize(32,32)` makes the code run the fastest.  
+For block sizes greater than 32, we obtain an error.  So it appears that for this "naive" gaussian blur (i.e. only global memory), then setting `dim3 blockSize(16,16)` or `dim3 blockSize(32,32)` makes the code run the fastest.
+
+### Examples of using `__shared__` memory
+
+I provide further, real-world, in practice, examples of using `__shared__` (more examples, the better, as otherwise we only have the 1 example from the documentation):  
+
+- From [eliben's fork of cs344](https://github.com/eliben/cs344/blob/master/HW2/student_func.cu)
+
+```
+__global__ void blur_shared( ... ) {
+
+	   extern __shared__ float sfilter[];
+
+}
+
+
+
+
+
+
+
+
+
