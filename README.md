@@ -38,6 +38,12 @@ Changes by me (Ernest Yeung)
 | student_func.cu | `./Problem Sets/Problem Set 2/` | Problem Set 2 | my solution |
 | student_func00.cu | `./Problem Sets/Problem Set 2/` | Problem Set 2 | my solution; has the "naive" gaussian blur method (i.e. from global memory) |
 | Makefile | `./Problem Sets/Problem Set 2/` | Problem Set 2 | changed Makefile to run on my Fedora Linux setup (mostly changed gcc to nvcc compiler, needed for `cuda_runtime.h` |
-| HW2 | `./Problem Sets/Problem Set 2/` | Problem Set 2 | executable for Problem Set 2 for reference (of a working executable), using the "naive" gaussian blur method (no shared memory).  Results I obtained for running `./HW2 cinque_terre_small.jpg` was `Your code ran in: 1.595616 msecs` on a NVIDIA GTX GeForce 980 Ti, EVGA |
+| HW2 | `./Problem Sets/Problem Set 2/` | Problem Set 2 | executable for Problem Set 2 for reference (of a working executable), using the "naive" gaussian blur method (no shared memory).  Results I obtained for running `./HW2 cinque_terre_small.jpg` was `Your code ran in: 1.595616 msecs` on a NVIDIA GTX GeForce 980 Ti, EVGA, for thread block size of 16x16, for 32x32, 1.514528 msecs |
 
+
+## more on Problem Set 2
+
+My writeup is in [`CompPhys.pdf`](https://github.com/ernestyalumni/CompPhys/blob/master/LaTeXandpdfs/CompPhys.pdf) of the [`LaTeXandpdfs` directory](https://github.com/ernestyalumni/CompPhys/tree/master/LaTeXandpdfs) of the [CompPhys github repository](https://github.com/ernestyalumni/CompPhys)
+
+### on the "naive" gaussian blur method (i.e. from global memory)
 
