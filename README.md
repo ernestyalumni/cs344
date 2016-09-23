@@ -49,7 +49,7 @@ My writeup is in [`CompPhys.pdf`](https://github.com/ernestyalumni/CompPhys/blob
 
 #### Benchmarks (global memory):
 
-Doing `./HW2 cinque_terre_small.jpg`, using this "naive" gaussian blur method (i.e. from global memory only), 
+Doing `./HW2 cinque_terre_small.jpg`, using this "naive" gaussian blur method (i.e. from global memory only), on the *EVGA NVIDIA GeForce GTX 980 Ti*:
 
 For a `dim3 blockSize(1,1)`, i.e. $(M_x,M_y)=(1,1)$
 
