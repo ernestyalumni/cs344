@@ -47,8 +47,104 @@ My writeup is in [`CompPhys.pdf`](https://github.com/ernestyalumni/CompPhys/blob
 
 ### on the "naive" gaussian blur method (i.e. from global memory)
 
-#### Benchmarks:
+#### Benchmarks (global memory):
 
 Doing `./HW2 cinque_terre_small.jpg`, using this "naive" gaussian blur method (i.e. from global memory only), 
 
 For a `dim3 blockSize(1,1)`, i.e. $(M_x,M_y)=(1,1)$
+
+```  
+[@localhost Problem Set 2]$ ./HW2 cinque_terre_small.jpg  
+Your code ran in: 46.665215 msecs.  
+PASS  
+[@localhost Problem Set 2]$ ./HW2 cinque_terre_small.jpg  
+Your code ran in: 46.587330 msecs.  
+PASS  
+[@localhost Problem Set 2]$ ./HW2 cinque_terre_small.jpg  
+Your code ran in: 46.565727 msecs.  
+PASS  
+```
+
+For a `dim3 blockSize(2,2)`
+
+```  
+[@localhost Problem Set 2]$ ./HW2 cinque_terre_small.jpg
+Your code ran in: 12.110336 msecs.
+PASS
+[@localhost Problem Set 2]$ ./HW2 cinque_terre_small.jpg
+Your code ran in: 12.115456 msecs.
+PASS
+[@localhost Problem Set 2]$ ./HW2 cinque_terre_small.jpg
+Your code ran in: 12.149376 msecs.
+PASS
+```
+
+For a `dim3 blockSize(4,4)`
+
+```
+[@localhost Problem Set 2]$ ./HW2 cinque_terre_small.jpg
+Your code ran in: 3.383424 msecs.
+PASS
+[@localhost Problem Set 2]$ ./HW2 cinque_terre_small.jpg
+Your code ran in: 3.057344 msecs.
+PASS
+[@localhost Problem Set 2]$ ./HW2 cinque_terre_small.jpg
+Your code ran in: 3.060672 msecs.
+PASS
+```
+
+For a `dim3 blockSize(8,8)`
+
+```
+[@localhost Problem Set 2]$ ./HW2 cinque_terre_small.jpg
+Your code ran in: 1.775840 msecs.
+PASS
+[@localhost Problem Set 2]$ ./HW2 cinque_terre_small.jpg
+Your code ran in: 1.781280 msecs.
+PASS
+[@localhost Problem Set 2]$ ./HW2 cinque_terre_small.jpg
+Your code ran in: 1.776864 msecs.
+PASS
+```
+
+For a `dim3 blockSize(16,16)`
+
+```
+[@localhost Problem Set 2]$ ./HW2 cinque_terre_small.jpg
+Your code ran in: 1.582560 msecs.
+PASS
+[@localhost Problem Set 2]$ ./HW2 cinque_terre_small.jpg
+Your code ran in: 1.569120 msecs.
+PASS
+[@localhost Problem Set 2]$ ./HW2 cinque_terre_small.jpg
+Your code ran in: 1.350688 msecs.
+PASS
+```
+
+For a `dim3 blockSize(32,32)`
+
+```
+[@localhost Problem Set 2]$ ./HW2 cinque_terre_small.jpg
+Your code ran in: 1.521856 msecs.
+PASS
+[@localhost Problem Set 2]$ ./HW2 cinque_terre_small.jpg
+Your code ran in: 1.530208 msecs.
+PASS
+[@localhost Problem Set 2]$ ./HW2 cinque_terre_small.jpg
+Your code ran in: 1.513664 msecs.
+PASS
+[@localhost Problem Set 2]$ ./HW2 cinque_terre_small.jpg
+Your code ran in: 1.514176 msecs.
+PASS
+[@localhost Problem Set 2]$ ./HW2 cinque_terre_small.jpg
+Your code ran in: 1.305984 msecs.
+PASS
+[@localhost Problem Set 2]$ ./HW2 cinque_terre_small.jpg
+Your code ran in: 1.297568 msecs.
+PASS
+[@localhost Problem Set 2]$ ./HW2 cinque_terre_small.jpg
+Your code ran in: 1.303168 msecs.
+PASS
+```
+
+For block sizes greater than 32, we obtain an error.  So it appears that for this "naive" gaussian blur (i.e. only global memory), then setting `dim3 blockSize(16,16)` or `dim3 blockSize(32,32)` makes the code run the fastest.  
