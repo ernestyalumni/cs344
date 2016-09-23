@@ -43,7 +43,12 @@ Changes by me (Ernest Yeung)
 
 ## more on Problem Set 2
 
-My writeup is in [`CompPhys.pdf`](https://github.com/ernestyalumni/CompPhys/blob/master/LaTeXandpdfs/CompPhys.pdf) of the [`LaTeXandpdfs` directory](https://github.com/ernestyalumni/CompPhys/tree/master/LaTeXandpdfs) of the [CompPhys github repository](https://github.com/ernestyalumni/CompPhys)
+My writeup is in [`CompPhys.pdf`](https://github.com/ernestyalumni/CompPhys/blob/master/LaTeXandpdfs/CompPhys.pdf) of the [`LaTeXandpdfs` directory](https://github.com/ernestyalumni/CompPhys/tree/master/LaTeXandpdfs) of the [CompPhys github repository](https://github.com/ernestyalumni/CompPhys) - search for "On Problem Set 2".  
 
 ### on the "naive" gaussian blur method (i.e. from global memory)
 
+#### Benchmarks:
+
+Doing `./HW2 cinque_terre_small.jpg`, using this "naive" gaussian blur method (i.e. from global memory only), 
+
+For a `dim3 blockSize(1,1)`, i.e. $(M_x,M_y)=(1,1)$
