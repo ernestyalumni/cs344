@@ -157,7 +157,7 @@ For block sizes greater than 32, we obtain an error.  So it appears that for thi
 
 I provide further, real-world, in practice, examples of using `__shared__` (more examples, the better, as otherwise we only have the 1 example from the documentation):  
 
-- From [eliben's fork of cs344](https://github.com/eliben/cs344/blob/master/HW2/student_func.cu)
+- From [eliben's fork of cs344](https://github.com/eliben/cs344/blob/master/HW2/student_func.cu):
 
 ```
 __global__ void blur_shared( ... ) {
@@ -166,11 +166,65 @@ __global__ void blur_shared( ... ) {
 
 }
 
+```
+
+- From [`heat_2d.cu`](https://github.com/ernestyalumni/CUDACFD_out/blob/master/heat2d/physlib/heat_2d.cu):
+
+```
+__global__ void tempKernel( ... ) {
+	   
+	   extern __shared__ float s_in[];
+
+}
+```
+
+### On other people's implementation/solutions for Problem Set 2 (Udacity CS344) and the implementation of `__shared__` memory tiling scheme
+
+The "naive" global memory implementation of image blurring (really, the use of a "local" stencil) is fairly clear and straightforward as it really is 1-to-1 from global memory to global memory.  A great majority of code solutions/implementations floating out there on github and forums are of this.  See my [`student_func_global.cu`](https://github.com/ernestyalumni/cs344/blob/master/Problem%20Sets/Problem%20Set%202/student_func_global.cu).
+
+No one seems to have a clear, lucid explanation or grasp of the "tiling" scheme needed to implement `__shared__` memory, and in particular, showing the "short strokes" that would account for, comprehensively and **correctly** the, literal, corner cases.
+
+For instance, [raoqiyu's solution for Problem Set 2](https://github.com/raoqiyu/CS344-Problem-Sets/tree/master/Problem%20Set%202), in particular, [raoqiyu's `student_func.cu`](https://github.com/raoqiyu/CS344-Problem-Sets/blob/master/Problem%20Set%202/student_func.cu), fails to account for the corner cases:
+
+```  
+Your code ran in: 1.399648 msecs.
+Difference at pos 0
+Reference: 255
+GPU      : 214
+[@localhost Problem Set 2]$ ./HW2 cinque_terre_small.jpg
+Your code ran in: 1.388672 msecs.
+Difference at pos 0
+Reference: 255
+GPU      : 214
+[@localhost Problem Set 2]$ ./HW2 cinque_terre_small.jpg
+Your code ran in: 1.401088 msecs.
+Difference at pos 0
+Reference: 255
+GPU      : 214  
+```
+
+Same as in the case of [tmoneyx01's solution for Problem Set 2 i.e. Homework 2](https://github.com/tmoneyx01/Udacity_CS344/tree/master/HW2), in particular, [tmoneyx01's `student_func.cu`](https://github.com/tmoneyx01/Udacity_CS344/blob/master/HW2/student_func.cu)
 
 
+```  
+[@localhost Problem Set 2]$ ./HW2 cinque_terre_small.jpg
+Your code ran in: 1.387744 msecs.
+Difference at pos 0
+Reference: 255
+GPU      : 214
+[@localhost Problem Set 2]$ ./HW2 cinque_terre_small.jpg
+Your code ran in: 1.380704 msecs.
+Difference at pos 0
+Reference: 255
+GPU      : 214
+[@localhost Problem Set 2]$ ./HW2 cinque_terre_small.jpg
+Your code ran in: 1.384992 msecs.
+Difference at pos 0
+Reference: 255
+GPU      : 214
+```  
 
-
-
+In both cases, the problem seems to arise from not accounting for the "corner cases" of the so-called "halo cells" and this is clearly seen by checking out the image outputted `HW2_differenceImage.png`.  
 
 
 
