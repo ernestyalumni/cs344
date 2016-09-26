@@ -105,16 +105,6 @@
 #define M_X 16
 #define M_Y 16
 
-__device__ int bound_check(const int index, const int maxbound) {
-	int index_val = index ;
-	index_val = min( max( index_val, 0), maxbound-1 ) ;
-	return index_val;
-}
-
-// flatten with bounds
-__device__ int flatten_w_bound(int i_x, int i_y, int bound_x, int bound_y ) {
-	return bound_check( i_x, bound_x) + bound_x * bound_check( i_y , bound_y ) ;
-}
 __global__
 void gaussian_blur(const unsigned char* const inputChannel,
                    unsigned char* const outputChannel,
@@ -142,72 +132,38 @@ void gaussian_blur(const unsigned char* const inputChannel,
   // the value is out of bounds), you should explicitly clamp the neighbor values you read
   // to be within the bounds of the image. If this is not clear to you, then please refer
   // to sequential reference solution for the exact clamping semantics you should follow.
-	const int RAD = filterWidth /2 ; 
-
-	extern __shared__ float sh_in[] ; 
-
-	const int k_x = threadIdx.x + blockDim.x * blockIdx.x ; 
-	const int k_y = threadIdx.y + blockDim.y * blockIdx.y ; 
+	const int k_x = threadIdx.x + blockIdx.x * blockDim.x ; 
+	const int k_y = threadIdx.y + blockIdx.y * blockDim.y ; 
 	
-	if ( k_x >= numCols || k_y >= numRows ) {
+	if ( k_x >= numCols || k_y >= numRows ) { 
 		return; }
 	
-	const int k = flatten_w_bound( k_x , k_y , numCols, numRows ); 
+	if ( k_x < 0 || k_y <0 ) {
+		return; }
 	
-	const int S_x = static_cast<int>(blockDim.x + 2 * RAD) ; 
-	const int S_y = static_cast<int>(blockDim.y + 2 * RAD) ;
+	const int k = k_x + numCols * k_y ; 
 	
-	const int s_x = threadIdx.x + RAD ;						
-	const int s_y = threadIdx.y + RAD ;						
-	
-	float temp_sharedval = 0.f ; 
-	// load regular cells
-//	sh_in[ flatten_w_bound(s_x,s_y,S_x,S_y)] = 
-	temp_sharedval = 
-		static_cast<float>(inputChannel[ k ] ) ;
-	
-	// load halo cells
-	if ( threadIdx.x < RAD ) {
-		sh_in[ flatten_w_bound( s_x - RAD, s_y, S_x,S_y) ] = 
-			static_cast<float>(inputChannel[ flatten_w_bound( k_x-RAD, k_y, numCols, numRows ) ] ); 
-	
-		sh_in[ flatten_w_bound( s_x + blockDim.x, s_y, S_x , S_y ) ] = 
-			static_cast<float>( inputChannel[ 
-				flatten_w_bound( k_x + blockDim.x, k_y, numCols, numRows) ] ) ;
-	}
-	
-	if ( threadIdx.y < RAD ) {
-		sh_in[ flatten_w_bound( s_x, s_y - RAD, S_x,S_y) ] = 
-			static_cast<float>(inputChannel[ flatten_w_bound( k_x,k_y-RAD, numCols,numRows)]) ;
-		
-		sh_in[ flatten_w_bound( s_x, s_y + blockDim.y, S_x, S_y)] = 
-			static_cast<float>(inputChannel[ flatten_w_bound( k_x, k_y+blockDim.y, numCols,numRows)]);
-	}
-	
-	sh_in[ flatten_w_bound(s_x,s_y,S_x,S_y)] = temp_sharedval ; 
-	__syncthreads() ;
-	
-	int stencilindex_x = 0 ;
-	int stencilindex_y = 0 ;
-	float value = 0.f;
-	float inputvalue = 0.f;
+	float value = 0.f ;
+
+	int stencilindex_x = 0;
+	int stencilindex_y = 0;
+	float inputvalue = 0.f; 
 	float filtervalue = 0.f;
-	
 	for (int nu_y = 0; nu_y < filterWidth; nu_y++) {
-		stencilindex_y = s_y + nu_y - filterWidth/2;
+		stencilindex_y = k_y + nu_y - filterWidth/2;
 		
-		// boundary condition check of both ends (in 1 line!)
-//		stencilindex_y = min( max( stencilindex_y, 0), S_y-1);
+		// boundary condition check of both ends (in 1 line!) 
+		stencilindex_y = min( max( stencilindex_y,0), numRows-1);
 		for (int nu_x = 0; nu_x < filterWidth; nu_x++) {
-			stencilindex_x = s_x + nu_x - filterWidth/2;
+			stencilindex_x = k_x + nu_x - filterWidth/2;
 			
-			// boundary condition check of both ends (in 1 line!) 
-//			stencilindex_x = min(max(stencilindex_x,0), S_x-1);
-			inputvalue = sh_in[ 
-				flatten_w_bound( stencilindex_x, stencilindex_y, S_x, S_y ) ] ;
-			filtervalue = filter[ 
-				flatten_w_bound( nu_x, nu_y, filterWidth, filterWidth ) ] ;
-			value += filtervalue * inputvalue ;
+			// boundary condition check of both ends (in 1 line!)
+			stencilindex_x = min(max(stencilindex_x, 0), numCols-1);
+			inputvalue = 
+				static_cast<float>(inputChannel[ stencilindex_x + stencilindex_y * numCols ]) ;
+			filtervalue = 
+				filter[ nu_x + nu_y*filterWidth ] ;
+			value += filtervalue * inputvalue ; 
 		}
 	}
 	outputChannel[ k ] = value;
@@ -234,7 +190,7 @@ void separateChannels(const uchar4* const inputImageRGBA,
   // {
   //     return;
   // }
-
+	
 	const int k_x = threadIdx.x + blockIdx.x * blockDim.x ; 
 	const int k_y = threadIdx.y + blockIdx.y * blockDim.y ; 
 
@@ -250,7 +206,8 @@ void separateChannels(const uchar4* const inputImageRGBA,
 	
 	redChannel[ k ]   = inputRGBA.x ; 
 	greenChannel[ k ] = inputRGBA.y ; 
-	blueChannel[ k ]  = inputRGBA.z ; 	
+	blueChannel[ k ]  = inputRGBA.z ; 
+	
 }
 
 //This kernel takes in three color channels and recombines them
@@ -310,6 +267,7 @@ void allocateMemoryAndCopyToGPU(const size_t numRowsImage, const size_t numColsI
 	checkCudaErrors(
 		cudaMalloc(&d_filter, filtersize ) );
 		
+		
   //TODO:
   //Copy the filter on the host (h_filter) to the memory you just allocated
   //on the GPU.  cudaMemcpy(dst, src, numBytes, cudaMemcpyHostToDevice);
@@ -338,12 +296,8 @@ void your_gaussian_blur(const uchar4 * const h_inputImageRGBA, uchar4 * const d_
   //from the image size and and block size.
 	const int N_x = ( numCols + M_x - 1) / M_x ; 
 	const int N_y = ( numRows + M_y - 1) / M_y ; 
-
+	
   const dim3 gridSize(N_x,N_y);
-
-	// EY : Extra declaration for using shared memory:
-	const int RADIUS = filterWidth/2 ; 
-	const size_t smSz = (M_x + 2 * RADIUS ) * (M_y + 2 * RADIUS ) * sizeof(float); 
 
   //TODO: Launch a kernel for separating the RGBA image into different color channels
 
@@ -357,17 +311,18 @@ void your_gaussian_blur(const uchar4 * const h_inputImageRGBA, uchar4 * const d_
 
   //TODO: Call your convolution kernel here 3 times, once for each color channel.
 
-	gaussian_blur<<<gridSize, blockSize, smSz>>>( d_red, d_redBlurred, 
+	gaussian_blur<<<gridSize, blockSize>>>( d_red, d_redBlurred, 
 											numRows, numCols, 
 											d_filter, filterWidth );
 
-	gaussian_blur<<<gridSize, blockSize, smSz>>>( d_green, d_greenBlurred, 
+	gaussian_blur<<<gridSize, blockSize>>>( d_green, d_greenBlurred, 
 											numRows, numCols, 
 											d_filter, filterWidth );
 
-	gaussian_blur<<<gridSize, blockSize, smSz>>>( d_blue, d_blueBlurred, 
+	gaussian_blur<<<gridSize, blockSize>>>( d_blue, d_blueBlurred, 
 											numRows, numCols, 
 											d_filter, filterWidth );
+											
 
   // Again, call cudaDeviceSynchronize(), then call checkCudaErrors() immediately after
   // launching your kernel to make sure that you didn't make any mistakes.
@@ -394,8 +349,8 @@ void cleanup() {
   checkCudaErrors(cudaFree(d_red));
   checkCudaErrors(cudaFree(d_green));
   checkCudaErrors(cudaFree(d_blue));
-  
-  	checkCudaErrors(
+
+	checkCudaErrors(
 		cudaFree( d_filter ));
-  
+
 }
