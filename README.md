@@ -226,5 +226,23 @@ GPU      : 214
 
 In both cases, the problem seems to arise from not accounting for the "corner cases" of the so-called "halo cells" and this is clearly seen by checking out the image outputted `HW2_differenceImage.png`.  
 
+`ruizhou_313809205764` or [ruizhou](https://discussions.udacity.com/users/ruizhou_313809205764/activity) on the Udacity cs344 forums had an interesting scheme where the shared tile was inputted in, in 4 steps, i.e. in 4 overlapping tiles, with the overlap being the "regular" cells within a threadblock, and so all corner cases for the halo cells were included, even though the regular cells were counted in 4 times (total).  I tried to write up the code and placed it in [`student_func_sharedoverlaps.cu`](https://github.com/ernestyalumni/cs344/blob/master/Problem%20Sets/Problem%20Set%202/student_func_sharedoverlaps.cu) to test it out.  It's essentially the same, but I'm just trying to follow my mathematical notation in [`CompPhys.pdf`](https://github.com/ernestyalumni/CompPhys/blob/master/LaTeXandpdfs/CompPhys.pdf).
+
+However, I obtain
+```
+[@localhost Problem Set 2]$ ./HW2 cinque_terre_small.jpg
+CUDA error at: student_func.cu:468
+an illegal memory access was encountered cudaGetLastError()
+```
+and it wasn't the problem with choice of block size (2,4,8,16).
+
+
+### tiling scheme with `__shared__` memory is a nontrivial problem
+
+The so-called "tiling" scheme with `__shared__` memory is a nontrivial problem.  In fact, there is active research in optimizing the tiling scheme or even simply clarifying the implementation of the method on the GPU.
+
+Siham Tabik, Maurice Peemen, Nicolas Guil, and Henk Corporaal. *Demystifying the 16 x 16 thread-block for stencils on the GPU.* CONCURRENCY AND COMPUTATION: PRACTICE AND EXPERIENCE  *Concurrency Computat.: Pract. Exper.* (2015)  [CPE.pdf](http://www.ac.uma.es/~siham/CPE.pdf)
+
+
 
 
