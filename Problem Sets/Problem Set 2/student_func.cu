@@ -102,12 +102,12 @@
 
 #include "utils.h"
 
-#define M_X 16
-#define M_Y 16
+#define M_X 32
+#define M_Y 32
 
 __device__ int bound_check(const int index, const int maxbound) {
 	int index_val = index ;
-	index_val = min( max( index_val, 0), maxbound-1 ) ;
+	index_val = min( max( index_val, 0), maxbound -1) ;
 	return index_val;
 }
 
@@ -148,9 +148,7 @@ void gaussian_blur(const unsigned char* const inputChannel,
 
 	const int k_x = threadIdx.x + blockDim.x * blockIdx.x ; 
 	const int k_y = threadIdx.y + blockDim.y * blockIdx.y ; 
-	
-	if ( k_x >= numCols || k_y >= numRows ) {
-		return; }
+
 	
 	const int k = flatten_w_bound( k_x , k_y , numCols, numRows ); 
 	
@@ -159,32 +157,23 @@ void gaussian_blur(const unsigned char* const inputChannel,
 	
 	const int s_x = threadIdx.x + RAD ;						
 	const int s_y = threadIdx.y + RAD ;						
-	
-	float temp_sharedval = 0.f ; 
-	// load regular cells
-//	sh_in[ flatten_w_bound(s_x,s_y,S_x,S_y)] = 
-	temp_sharedval = 
-		static_cast<float>(inputChannel[ k ] ) ;
-	
-	// load halo cells
-	if ( threadIdx.x < RAD ) {
-		sh_in[ flatten_w_bound( s_x - RAD, s_y, S_x,S_y) ] = 
-			static_cast<float>(inputChannel[ flatten_w_bound( k_x-RAD, k_y, numCols, numRows ) ] ); 
-	
-		sh_in[ flatten_w_bound( s_x + blockDim.x, s_y, S_x , S_y ) ] = 
-			static_cast<float>( inputChannel[ 
-				flatten_w_bound( k_x + blockDim.x, k_y, numCols, numRows) ] ) ;
+
+	int l_x = 0;
+	int l_y = 0;
+
+	for (int i = threadIdx.x; i< S_x; i+= static_cast<int>(blockDim.x) ) {
+		for (int j = threadIdx.y; j < S_y; j+= static_cast<int>(blockDim.y) ) {
+			l_x = bound_check( i-RAD + static_cast<int>(blockDim.x*blockIdx.x), numCols) ; 
+			l_y = bound_check( j-RAD + static_cast<int>(blockDim.y*blockIdx.y), numRows) ; 
+
+			sh_in[ flatten_w_bound(i,j,S_x,S_y)] = 
+				static_cast<float>( inputChannel[ flatten_w_bound( l_x,l_y,numCols,numRows)]);	
+		}
 	}
-	
-	if ( threadIdx.y < RAD ) {
-		sh_in[ flatten_w_bound( s_x, s_y - RAD, S_x,S_y) ] = 
-			static_cast<float>(inputChannel[ flatten_w_bound( k_x,k_y-RAD, numCols,numRows)]) ;
-		
-		sh_in[ flatten_w_bound( s_x, s_y + blockDim.y, S_x, S_y)] = 
-			static_cast<float>(inputChannel[ flatten_w_bound( k_x, k_y+blockDim.y, numCols,numRows)]);
-	}
-	
-	sh_in[ flatten_w_bound(s_x,s_y,S_x,S_y)] = temp_sharedval ; 
+
+	if ( k_x >= numCols || k_y >= numRows ) {
+		return; }
+
 	__syncthreads() ;
 	
 	int stencilindex_x = 0 ;
@@ -192,17 +181,13 @@ void gaussian_blur(const unsigned char* const inputChannel,
 	float value = 0.f;
 	float inputvalue = 0.f;
 	float filtervalue = 0.f;
-	
+
 	for (int nu_y = 0; nu_y < filterWidth; nu_y++) {
-		stencilindex_y = s_y + nu_y - filterWidth/2;
+		stencilindex_y = s_y + nu_y - RAD;
 		
-		// boundary condition check of both ends (in 1 line!)
-//		stencilindex_y = min( max( stencilindex_y, 0), S_y-1);
 		for (int nu_x = 0; nu_x < filterWidth; nu_x++) {
-			stencilindex_x = s_x + nu_x - filterWidth/2;
+			stencilindex_x = s_x + nu_x - RAD;
 			
-			// boundary condition check of both ends (in 1 line!) 
-//			stencilindex_x = min(max(stencilindex_x,0), S_x-1);
 			inputvalue = sh_in[ 
 				flatten_w_bound( stencilindex_x, stencilindex_y, S_x, S_y ) ] ;
 			filtervalue = filter[ 
@@ -210,8 +195,10 @@ void gaussian_blur(const unsigned char* const inputChannel,
 			value += filtervalue * inputvalue ;
 		}
 	}
+
 	outputChannel[ k ] = value;
 }
+
 
 //This kernel takes in an image represented as a uchar4 and splits
 //it into three images consisting of only one color channel each
@@ -343,7 +330,7 @@ void your_gaussian_blur(const uchar4 * const h_inputImageRGBA, uchar4 * const d_
 
 	// EY : Extra declaration for using shared memory:
 	const int RADIUS = filterWidth/2 ; 
-	const size_t smSz = (M_x + 2 * RADIUS ) * (M_y + 2 * RADIUS ) * sizeof(float); 
+	const size_t smSz = (M_x + 2 * RADIUS ) * (M_y + 2 * RADIUS ) * sizeof(float) ; 
 
   //TODO: Launch a kernel for separating the RGBA image into different color channels
 
