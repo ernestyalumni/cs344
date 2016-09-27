@@ -243,6 +243,8 @@ The so-called "tiling" scheme with `__shared__` memory is a nontrivial problem. 
 
 Siham Tabik, Maurice Peemen, Nicolas Guil, and Henk Corporaal. *Demystifying the 16 x 16 thread-block for stencils on the GPU.* CONCURRENCY AND COMPUTATION: PRACTICE AND EXPERIENCE  *Concurrency Computat.: Pract. Exper.* (2015)  [CPE.pdf](http://www.ac.uma.es/~siham/CPE.pdf)
 
+### **Solution to Problem Set 2 that works (passes) and uses `__shared__` memory**
+
 
 
 
