@@ -35,7 +35,7 @@ Changes by me (Ernest Yeung)
 | codename          | directory                      | Keywords      | Description |
 | ----------------- | :----------------------------- | :-----------: | ----------- | 
 | `student_func00.cu` | `./Problem Sets/Problem Set 1/` | Problem Set 1 | My first attempt before I spent 2.5 months with CUDA C/C++ (about June 2016) |
-| `student_func.cu` | `./Problem Sets/Problem Set 2/` | Problem Set 2 | my solution |
+| `student_func.cu` | `./Problem Sets/Problem Set 2/` | Problem Set 2 | my solution; it implements shared memory for the "tiling" scheme, looping through all the regular and halo cells to load into shared memory |
 | `student_func00.cu` | `./Problem Sets/Problem Set 2/` | Problem Set 2 | my solution; has the "naive" gaussian blur method (i.e. from global memory) |
 | `Makefile` | `./Problem Sets/Problem Set 2/` | Problem Set 2 | changed Makefile to run on my Fedora Linux setup (mostly changed gcc to nvcc compiler, needed for `cuda_runtime.h` |
 | `HW2` | `./Problem Sets/Problem Set 2/` | Problem Set 2 | executable for Problem Set 2 for reference (of a working executable), using the "naive" gaussian blur method (no shared memory).  Results I obtained for running `./HW2 cinque_terre_small.jpg` was `Your code ran in: 1.595616 msecs` on a NVIDIA GTX GeForce 980 Ti, EVGA, for thread block size of 16x16, for 32x32, 1.514528 msecs; see the benchmarks below |
@@ -300,10 +300,12 @@ One point I still don't understand is how the placement of the line
   // }
 ```
 or, in my notation
+
 ```
-	if ( k_x >= numCols || k_y >= numRows ) {
-		return; }
-		```
+if ( k_x >= numCols || k_y >= numRows ) {
+   return; }
+```
+
 could affect the "correctness" of the blur function at the very edges.  When I placed it at the beginning, instead of in the middle, after loading the values into shared memory, it gave a wrong answer.  I don't see why.
 
 Otherwise, the loop for this code through the cells is very clear in accounting for all the halo cells as well, and "corner cases" of the desired stencil.  Also, I thought this problem set was highly non-trivial with the tiling scheme for shared memory, as there are a lot of incorrect code out that fails to implement this correctly.  
