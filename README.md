@@ -245,6 +245,66 @@ Siham Tabik, Maurice Peemen, Nicolas Guil, and Henk Corporaal. *Demystifying the
 
 ### **Solution to Problem Set 2 that works (passes) and uses `__shared__` memory**
 
+I wrote up my best and fastest implementation, that works (passes), of gaussian blur, which uses a stencil pattern, that uses `__shared__` memory and placed it here:
 
+[`student_func.cu`](https://github.com/ernestyalumni/cs344/blob/master/Problem%20Sets/Problem%20Set%202/student_func.cu)
 
+The loop through the halo cells I found was *highly* non-trivial, and was not well-tackled, or handled, with if-then clauses/cases.  The loop through the regular and halo cells to be loaded was from [Samuel Lin or Samuel271828](https://discussions.udacity.com/users/Samuel271828), where his code was also placed in [Samuel Lin or samuellin3310's github repositories](https://github.com/samuellin3310), namely [`student_fuction_improved_share.cu` (sic)](https://github.com/samuellin3310/ro-to-Parallel-Programming_set2/blob/master/student_fuction_improved_share.cu).  And again, take a look at my writeup, named [`CompPhys.pdf`](https://github.com/ernestyalumni/CompPhys/blob/master/LaTeXandpdfs/CompPhys.pdf), for the mathematical formulation.
+
+Here the benchmarks for [`student_func.cu`](https://github.com/ernestyalumni/cs344/blob/master/Problem%20Sets/Problem%20Set%202/student_func.cu):
+
+```
+[@localhost Problem Set 2]$ ./HW2 cinque_terre_small.jpg
+Your code ran in: 1.428704 msecs.
+PASS
+[@localhost Problem Set 2]$ ./HW2 cinque_terre_small.jpg
+Your code ran in: 1.420000 msecs.
+PASS
+[@localhost Problem Set 2]$ ./HW2 cinque_terre_small.jpg
+Your code ran in: 1.417344 msecs.
+PASS
+[@localhost Problem Set 2]$ ./HW2 cinque_terre_small.jpg
+Your code ran in: 1.421216 msecs.
+PASS
+[@localhost Problem Set 2]$ ./HW2 cinque_terre_small.jpg
+Your code ran in: 1.415008 msecs.
+PASS
+[@localhost Problem Set 2]$ ./HW2 cinque_terre_small.jpg
+Your code ran in: 1.181792 msecs.
+PASS
+[@localhost Problem Set 2]$ ./HW2 cinque_terre_small.jpg
+Your code ran in: 1.187072 msecs.
+PASS
+[@localhost Problem Set 2]$ ./HW2 cinque_terre_small.jpg
+Your code ran in: 1.200896 msecs.
+PASS
+[@localhost Problem Set 2]$ ./HW2 cinque_terre_small.jpg
+Your code ran in: 1.179328 msecs.
+PASS
+[@localhost Problem Set 2]$ ./HW2 cinque_terre_small.jpg
+Your code ran in: 1.181440 msecs.
+PASS
+[@localhost Problem Set 2]$ ./HW2 cinque_terre_small.jpg
+Your code ran in: 1.184480 msecs.
+PASS
+```  
+
+Curiously, the code runs at either 1.42 msecs. or 1.18 msecs.  Taking 1.18 msecs, using `__shared__` memory is an improvement over global memory of (1.30 - 1.18)/1.30 * 100 % = 9 %, 9 or 10 percent improvement.  
+
+One point I still don't understand is how the placement of the line
+```
+  // if ( absolute_image_position_x >= numCols ||
+  //      absolute_image_position_y >= numRows )
+  // {
+  //     return;
+  // }
+```
+or, in my notation
+```
+	if ( k_x >= numCols || k_y >= numRows ) {
+		return; }
+		```
+could affect the "correctness" of the blur function at the very edges.  When I placed it at the beginning, instead of in the middle, after loading the values into shared memory, it gave a wrong answer.  I don't see why.
+
+Otherwise, the loop for this code through the cells is very clear in accounting for all the halo cells as well, and "corner cases" of the desired stencil.  Also, I thought this problem set was highly non-trivial with the tiling scheme for shared memory, as there are a lot of incorrect code out that fails to implement this correctly.  
 
