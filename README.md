@@ -291,6 +291,8 @@ PASS
 
 Curiously, the code runs at either 1.42 msecs. or 1.18 msecs.  Taking 1.18 msecs, using `__shared__` memory is an improvement over global memory of (1.30 - 1.18)/1.30 * 100 % = 9 %, 9 or 10 percent improvement.  
 
+(EY: 20161002 The following point was resolved in the [forum discussion in Udacity cs344](https://discussions.udacity.com/t/any-one-completed-problem-set-2-using-shared-memory/158442/7), thanks again to [Samuel Lin or Samuel271828](https://discussions.udacity.com/users/Samuel271828))
+
 One point I still don't understand is how the placement of the line
 ```
   // if ( absolute_image_position_x >= numCols ||
@@ -309,4 +311,6 @@ if ( k_x >= numCols || k_y >= numRows ) {
 could affect the "correctness" of the blur function at the very edges.  When I placed it at the beginning, instead of in the middle, after loading the values into shared memory, it gave a wrong answer.  I don't see why.
 
 Otherwise, the loop for this code through the cells is very clear in accounting for all the halo cells as well, and "corner cases" of the desired stencil.  Also, I thought this problem set was highly non-trivial with the tiling scheme for shared memory, as there are a lot of incorrect code out that fails to implement this correctly.  
+
+(EY: 20161002 Again, this point was resolved in the [forum discussion in Udacity cs344](https://discussions.udacity.com/t/any-one-completed-problem-set-2-using-shared-memory/158442/7), thanks again to [Samuel Lin or Samuel271828](https://discussions.udacity.com/users/Samuel271828) - also see [`CompPhys.pdf`, search for Problem Set 2](https://github.com/ernestyalumni/CompPhys/blob/master/LaTeXandpdfs/CompPhys.pdf)).  
 
