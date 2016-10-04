@@ -40,7 +40,8 @@ Changes by me (Ernest Yeung)
 | `Makefile` | `./Problem Sets/Problem Set 2/` | Problem Set 2 | changed Makefile to run on my Fedora Linux setup (mostly changed gcc to nvcc compiler, needed for `cuda_runtime.h` |
 | `HW2` | `./Problem Sets/Problem Set 2/` | Problem Set 2 | executable for Problem Set 2 for reference (of a working executable), using the "naive" gaussian blur method (no shared memory).  Results I obtained for running `./HW2 cinque_terre_small.jpg` was `Your code ran in: 1.595616 msecs` on a NVIDIA GTX GeForce 980 Ti, EVGA, for thread block size of 16x16, for 32x32, 1.514528 msecs; see the benchmarks below |
 | `student_func_global.cu` | `./Problem Sets/Problem Set 2/` | Problem Set 2 | my final version implementing the "naive" gaussian blur method (i.e. from global memory) |
-
+| `reduce_serial.c` | `./Lesson Code Snippets/Lesson 3 Code Snippets/`  | Lesson 3 Code Snippet, reduce, serial, C | [Serial implementation of reduce](https://classroom.udacity.com/courses/cs344/lessons/86719951/concepts/876789040923#), in C   |
+| `reduce_serial_vectors.cpp` | `./Lesson Code Snippets/Lesson 3 Code Snippets/`  | Lesson 3 Code Snippet, reduce, serial, C++11/14, vector, vectors |  [Serial implementation of reduce](https://classroom.udacity.com/courses/cs344/lessons/86719951/concepts/876789040923#), using C++11/14 vector(s) (library); next step I'd take is to write functions, but using templates   |
 
 
 ## more on Problem Set 2
