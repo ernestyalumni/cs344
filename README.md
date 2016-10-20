@@ -42,6 +42,7 @@ Changes by me (Ernest Yeung)
 | `student_func_global.cu` | `./Problem Sets/Problem Set 2/` | Problem Set 2 | my final version implementing the "naive" gaussian blur method (i.e. from global memory) |
 | `reduce_serial.c` | `./Lesson Code Snippets/Lesson 3 Code Snippets/`  | Lesson 3 Code Snippet, reduce, serial, C | [Serial implementation of reduce](https://classroom.udacity.com/courses/cs344/lessons/86719951/concepts/876789040923#), in C   |
 | `reduce_serial_vectors.cpp` | `./Lesson Code Snippets/Lesson 3 Code Snippets/`  | Lesson 3 Code Snippet, reduce, serial, C++11/14, vector, vectors |  [Serial implementation of reduce](https://classroom.udacity.com/courses/cs344/lessons/86719951/concepts/876789040923#), using C++11/14 vector(s) (library); next step I'd take is to write functions, but using templates   |
+| `bitwiserightshift.cpp` | `./Lesson Code Snippets/Lesson 3 Code Snippets/` | Lesson 3 Code Snippet, bitwise right shift, bitwise operator | explanation, exploration of bitwise right shift, bitwise operators |
 
 
 ## more on Problem Set 2
