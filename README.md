@@ -52,7 +52,8 @@ In the subdirectory [`scan` in Lesson Code Snippets 3](https://github.com/ernest
 
 As you can see, for large float arrays, running parallel implementations in CUDA C++11, where I used the GeForce GTX 980 Ti **smokes** being run serially on the CPU (I use for a CPU the *Intel® Xeon(R) CPU E5-1650 v3 @ 3.50GHz × 12*.
 
-[scansmain]: https://ernestyalumni.files.wordpress.com/2016/11/scansmainscreenshot20from202016-11-042005-12-36.png "benchmarks for scans"
+![scansmain](https://ernestyalumni.files.wordpress.com/2016/11/scansmainscreenshot20from202016-11-042005-12-36.png)
+
 
 ## more on Problem Set 2
 
