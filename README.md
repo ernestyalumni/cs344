@@ -54,6 +54,8 @@ As you can see, for large float arrays, running parallel implementations in CUDA
 
 ![scansmain](https://ernestyalumni.files.wordpress.com/2016/11/scansmainscreenshot20from202016-11-042005-12-36.png)
 
+Note that I was learning about the Hillis/Steele and Blelloch (i.e. Prefix) scan(s) methods in conjunction with Udacity's cs344, <a href="https://classroom.udacity.com/courses/cs344/lessons/86719951/concepts/903740660923#">Lesson 3 - Fundamental GPU Algorithms (Reduce, Scan, Histogram), i.e. Unit 3.</a>.  I have a writeup of the notes I took related to these scans, formulating them mathematically, on my big <a href="https://github.com/ernestyalumni/CompPhys/blob/master/LaTeXandpdfs/CompPhys.pdf">CompPhys.pdf, Computational Physics notes</a>.    
+
 
 ## more on Problem Set 2
 
