@@ -44,7 +44,11 @@ Changes by me (Ernest Yeung)
 | `reduce_serial.c` | `./Lesson Code Snippets/Lesson 3 Code Snippets/`  | Lesson 3 Code Snippet, reduce, serial, C | [Serial implementation of reduce](https://classroom.udacity.com/courses/cs344/lessons/86719951/concepts/876789040923#), in C   |
 | `reduce_serial_vectors.cpp` | `./Lesson Code Snippets/Lesson 3 Code Snippets/`  | Lesson 3 Code Snippet, reduce, serial, C++11/14, vector, vectors |  [Serial implementation of reduce](https://classroom.udacity.com/courses/cs344/lessons/86719951/concepts/876789040923#), using C++11/14 vector(s) (library); next step I'd take is to write functions, but using templates   |
 | `bitwiserightshift.cpp` | `./Lesson Code Snippets/Lesson 3 Code Snippets/` | Lesson 3 Code Snippet, bitwise right shift, bitwise operator | explanation, exploration of bitwise right shift, bitwise operators |
+| `scan/main.cu`, `scan/methods/scans.cu` | `./Lesson Code Snippets/Lesson 3 Code Snippets/scan/` | Lesson 3 Code Snippet, Hillis/Steele scan, Blelloch (prefix) scan, parallel and serial | Hillis/Steele (inclusive) scan, Blelloch (prefix) (exclusive) scan, each in both parallel and serial implementation, in CUDA C++11 and C++11 with global memory |
 
+# Hillis/Steele (inclusive) scan, Blelloch (prefix; exclusive) scan(s)
+
+In the subdirectory [`scan` in Lesson Code Snippets 3](https://github.com/ernestyalumni/cs344/tree/master/Lesson%20Code%20Snippets/Lesson%203%20Code%20Snippets/scan) is an implementation in **CUDA C++11 and C++11**, with global memory, of the *Hillis/Steele (inclusive) scan, Blelloch (prefix; exclusive) scan(s), each in both parallel and serial implementation.  
 
 ## more on Problem Set 2
 
