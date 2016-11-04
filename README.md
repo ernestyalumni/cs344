@@ -30,6 +30,7 @@ Changes by me (Ernest Yeung)
 # Summary of changes
 
 - *Added* (entirely *new*) Lesson 1 Code Snippets in [Lesson Code Snippets](https://github.com/ernestyalumni/cs344/tree/master/Lesson%20Code%20Snippets)
+- *Most definitive* implementation of **Hillis/Steele** and **Blelloch (i.e. prefix)** scan(s), coded up to CUDA C++11 standards, using global memory, in [Lesson 3 Code Snippets' `scan` subdirectory](https://github.com/ernestyalumni/cs344/tree/master/Lesson%20Code%20Snippets/Lesson%203%20Code%20Snippets/scan).   
 
 
 | codename          | directory                      | Keywords      | Description |
