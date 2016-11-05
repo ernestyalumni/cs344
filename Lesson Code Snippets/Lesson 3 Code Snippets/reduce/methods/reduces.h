@@ -13,9 +13,11 @@
 
 // parallel implementations
 
-__global__ void global_reduce_kernel( float * d_out, float * d_in) ;
+__global__ void global_reduce_kernel( float * d_in, float * d_out, const int L) ;
 
-__global__ void shmem_reduce_kernel(float * d_out, const float * d_in);
+__global__ void shmem_reduce_kernel(const float * d_in, float * d_out );
+
+__global__ void shmem_reduce_add_kernel(const float* d_in, float* d_out, const int L ) ;
 
 void reduce_global( float * d_in, float * out, const int L, int M_in); 
 

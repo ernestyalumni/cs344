@@ -9,10 +9,13 @@
 
 // parallel implementations
 
-__global__ void global_reduce_kernel( float * d_out, float * d_in) 
+__global__ void global_reduce_kernel( float * d_in, float * d_out, const int L ) 
 {
 	int k_x = threadIdx.x + blockDim.x * blockIdx.x ; 
 	int tid = threadIdx.x ;
+	
+	if (k_x >= L) {
+		return; }
 	
 	// do reduction in global mem
 	for (unsigned int s = blockDim.x / 2; s > 0; s >>= 1)
@@ -31,17 +34,21 @@ __global__ void global_reduce_kernel( float * d_out, float * d_in)
 	}
 }
 
-__global__ void shmem_reduce_kernel(float * d_out, const float * d_in)
+__global__ void shmem_reduce_kernel(const float * d_in, float * d_out, const int L )
 {
 	// sdata is allocated in the kernel call: 3rd arg to <<<b, t, shmem>>>
 	extern __shared__ float sdata[];
 	
-	int k_x = threadIdx.x + blockDim.x + blockIdx.x ;
+	int k_x = threadIdx.x + blockDim.x * blockIdx.x ;
 	int tid = threadIdx.x ;
 	
 	// load shared mem from global mem
 	sdata[tid] = d_in[k_x] ;
 	__syncthreads();			// make sure entire block is loaded!
+	
+	if (k_x >= L ) {
+		return; }
+	
 	
 	// do reduction in shared mem
 	for (unsigned int s = blockDim.x / 2; s > 0; s >>= 1)
@@ -53,11 +60,21 @@ __global__ void shmem_reduce_kernel(float * d_out, const float * d_in)
 		__syncthreads() ;			// make sure all adds at one stage are done!
 	}
 	
+	
 	// only thread 0 writes result for this block back to global mem
 	if (tid == 0)
 	{
 		d_out[blockIdx.x] = sdata[0];
 	}
+}
+
+__global__ void shmem_reduce_add_kernel(const float* d_in, float* d_out, const int L ) {
+	// sdata is allocated in the kernel call: 3rd arg to <<<b, t, shmem>>>
+	extern __shared__ float sdata[];
+	
+	int k_x = threadIdx.x + blockDim.x + blockIdx.x ;
+	
+	
 }
 
 void reduce_global(float * d_in, float * out, const int L, int M_in) 
@@ -75,13 +92,13 @@ void reduce_global(float * d_in, float * out, const int L, int M_in)
 	checkCudaErrors( 
 		cudaMalloc((void **) &dev_intermediate, N_x * sizeof(float)) );
 	
-	global_reduce_kernel<<<N_x, M_x>>>( dev_intermediate, d_in ) ;
+	global_reduce_kernel<<<N_x, M_x>>>( d_in, dev_intermediate, L ) ;
 	
 	// now we're down to one block left, so reduce it
 	M_x = N_x;
 	N_x = 1;
 
-	global_reduce_kernel<<<N_x,M_x>>>( dev_out, dev_intermediate) ;
+	global_reduce_kernel<<<N_x,M_x>>>( dev_intermediate, dev_out, M_x) ;
 
 		// copy our results from device to host 
 	checkCudaErrors(
@@ -105,13 +122,13 @@ void reduce_shmem(float * d_in, float * out, const int L, int M_in)
 	checkCudaErrors( 
 		cudaMalloc((void **) &dev_intermediate, N_x * sizeof(float)) );
 	
-	shmem_reduce_kernel<<<N_x, M_x, M_x*sizeof(float)>>>( dev_intermediate, d_in ) ;
+	shmem_reduce_kernel<<<N_x, M_x, M_x*sizeof(float)>>>( d_in, dev_intermediate, L ) ;
 	
 	// now we're down to one block left, so reduce it
 	M_x = N_x;
 	N_x = 1;
 
-	shmem_reduce_kernel<<<N_x,M_x, M_x*sizeof(float)>>>( dev_out, dev_intermediate) ;
+	shmem_reduce_kernel<<<N_x,M_x, M_x*sizeof(float)>>>( dev_intermediate, dev_out, M_x ) ;
 
 		// copy our results from device to host 
 	checkCudaErrors(

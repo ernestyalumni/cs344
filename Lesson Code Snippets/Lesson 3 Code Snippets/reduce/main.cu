@@ -34,7 +34,7 @@ int main() {
 	
 	// MANUALLY CHANGE THESE 2: ARRAY_SIZE, DISPLAY_SIZE
 	// input array with interesting values "boilerplate"
-	const int ARRAY_SIZE { 1<<10 } ; /* */
+	const int ARRAY_SIZE { (1<<10)+5 } ; /* */
 	
 	std::cout << "For an (float) array of size (length) : " << ARRAY_SIZE << std::endl ;
 	std::cout << "or, in bytes, " << ARRAY_SIZE*sizeof(float) << std::endl;
@@ -74,7 +74,7 @@ int main() {
 	float result_reduce; //	*result_reduce_global = 0.f; doesn't work, obtain error and Segmentation Fault
 	
 	// MANUALLY CHANGE THIS 1: M_x
-	int M_x { 4 };
+	int M_x { 16 };
 	
 	reduce_global(dev_f_in, &result_reduce, ARRAY_SIZE, M_x);
 	
