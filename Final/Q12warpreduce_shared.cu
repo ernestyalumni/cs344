@@ -1,8 +1,21 @@
+/** 
+ * Q12warpreduce_shared.cu
+ * \file Q12warpreduce_shared.cu
+ * \brief Udacity cs344 Quiz:Final - Question 12
+ * cf. https://classroom.udacity.com/courses/cs344/lessons/2133758814/concepts/1388615750923#
+ * 
+ * Compilation tip
+ * nvcc Q12warpreduce_shared.cu -o Q12warpreduce_shared.exe
+ * or
+ * nvcc -std=c++11 Q12warpreduce_shared.cu -o Q12warpreduce_shared.exe
+ * to include C++11 features
+ * 
+ * */
 #include <stdio.h>
 #include <stdlib.h>
 #include <cuda_runtime.h>
-#include "compare.h"
-#include "gputimer.h"
+#include "./warpreduce/part_a/compare.h"
+#include "./warpreduce/part_a/gputimer.h"
 
 // Subpart A:
 // Write step 1 as a kernel that operates on threads 0--31.
@@ -23,9 +36,9 @@ __device__ unsigned int shared_reduce(unsigned int p, volatile unsigned int * s)
     // You should execute no more than 5 + operations (if you're doing
     // 31, you're doing it wrong)
     //
-    // TODO: Fill in the rest of this function
-
-   int i_x = threadIdx.x ; // i_x = [0, 1, ... M_x-1), with M_x = 32 = ARRAY_SIZE in this case
+    // TODO: Finish the rest of this function
+     
+    int i_x = threadIdx.x ; // i_x = [0, 1, ... M_x-1), with M_x = 32 = ARRAY_SIZE in this case
 
 	// load input values of d_in from global memory (through p) into shared memory
 	s[i_x] = p; 
@@ -40,7 +53,7 @@ __device__ unsigned int shared_reduce(unsigned int p, volatile unsigned int * s)
 		__syncthreads() ; 	
 	}
 
-    return s[0];
+	return s[0]; 
 }
 
 __global__ void reduce(unsigned int * d_out_shared,
@@ -94,10 +107,10 @@ int main(int argc, char **argv)
     cudaMemcpy(&h_out_shared, d_out_shared, sizeof(unsigned int), 
                cudaMemcpyDeviceToHost);
     
+    // compare your results against the sum
     compare(h_out_shared, sum);
 
     // free GPU memory allocation
     cudaFree(d_in);
     cudaFree(d_out_shared);
 }
-
