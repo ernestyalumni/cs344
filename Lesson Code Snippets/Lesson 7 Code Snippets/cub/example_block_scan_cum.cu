@@ -68,28 +68,61 @@ __global__ void BlockPrefixSumKernel(
     int         *d_out,         // Tile of output
     clock_t     *d_elapsed)     // Elapsed cycle count of block scan
 {
+	// Added this:
+    // Specialize BlockLoad type for our thread block (uses warp-striped loads for coalescing, then transposes in shared memory to a blocked arrangement)
+    typedef BlockLoad<int, BLOCK_THREADS, ITEMS_PER_THREAD, BLOCK_LOAD_WARP_TRANSPOSE> BlockLoadT;
+
+	// Added this:
+    // Specialize BlockStore type for our thread block (uses warp-striped loads for coalescing, then transposes in shared memory to a blocked arrangement)
+    typedef BlockStore<int, BLOCK_THREADS, ITEMS_PER_THREAD, BLOCK_STORE_WARP_TRANSPOSE> BlockStoreT;
+
+
     // Parameterize BlockScan type for our thread block
     typedef BlockScan<int, BLOCK_THREADS> BlockScanT;
 
     // Shared memory
-    __shared__ typename BlockScanT::SmemStorage smem_storage;
+//    __shared__ typename BlockScanT::SmemStorage smem_storage;
+
+    __shared__ union
+    {
+        typename BlockLoadT::TempStorage    load;
+        typename BlockStoreT::TempStorage   store;
+        typename BlockScanT::TempStorage    scan;
+    } temp_storage;
+
+
+
 
     // Per-thread tile data
     int data[ITEMS_PER_THREAD];
-    BlockLoadVectorized(d_in, data);
+//    BlockLoadVectorized(d_in, data);
+
+	// Load items into a blocked arrangement
+	BlockLoadT(temp_storage.load).Load(d_in, data);
+
+	// Add this:
+	// Barrier for smem reuse
+	__syncthreads();
 
     // Start cycle timer
     clock_t start = clock();
 
     // Compute exclusive prefix sum
     int aggregate;
-    BlockScanT::ExclusiveSum(smem_storage, data, data, aggregate);
+//    BlockScanT::ExclusiveSum(smem_storage, data, data, aggregate);
+	BlockScanT(temp_storage.scan).ExclusiveSum(data, data, aggregate);
 
     // Stop cycle timer
     clock_t stop = clock();
 
+	// Added this:
+	// Barrier for smem reuse
+	__syncthreads();
+
     // Store output
-    BlockStoreVectorized(d_out, data);
+//    BlockStoreVectorized(d_out, data);
+//	BlockStoreT(smem_storage).Store(d_out, data) ;
+	BlockStoreT(temp_storage.store).Store(d_out, data);
 
     // Store aggregate and elapsed clocks
     if (threadIdx.x == 0)
@@ -250,7 +283,7 @@ int main(int argc, char** argv)
     Test<128, 8>();
     Test<64, 16>();
     Test<32, 32>();
-    Test<16, 64>();
+//    Test<16, 64>();
 
 /****/
 
