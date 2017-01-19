@@ -3,6 +3,9 @@
 # 20161105
 NVCC = nvcc
 NVCC_FLAGS = -std=c++11
+# to use on the host CPU #include <algorithm> and std::for_each
+ALGO_FLAG = -D_MWAITXINTRIN_H_INCLUDED
+
 
 methodobjects  = reduces.o
 
@@ -12,7 +15,7 @@ main.exe: main.o $(methodobjects)
 	$(NVCC) $(NVCC_FLAGS) $^ -o $@
 	
 main.o : main.cu $(methodobjects)
-	$(NVCC) $(NVCC_FLAGS) -dc $< -o $@
+	$(NVCC) $(NVCC_FLAGS) $(ALGO_FLAG) -dc $< -o $@
 
 # Note to budding programmer: for some reason, CUDA C/C++ compiles C++ header files only as 
 # separate objects; otherwise I obtain errors such as the following:
