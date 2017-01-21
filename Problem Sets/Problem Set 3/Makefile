@@ -34,19 +34,26 @@ student: main.o student_func.o HW3.o loadSaveImage.o compare.o reference_calc.o 
 	$(NVCC) -o HW3 main.o student_func.o HW3.o loadSaveImage.o compare.o reference_calc.o -L $(OPENCV_LIBPATH) $(OPENCV_LIBS) $(NVCC_OPTS)
 
 main.o: main.cpp timer.h utils.h reference_calc.h compare.h
-	g++ -c main.cpp $(GCC_OPTS) -I $(CUDA_INCLUDEPATH)
+#	g++ -c main.cpp $(GCC_OPTS) -I $(CUDA_INCLUDEPATH)
+	$(NVCC) -c main.cpp $(NVCC_OPTS) -I $(CUDA_INCLUDEPATH)
+
 
 HW3.o: HW3.cu loadSaveImage.h utils.h
 	$(NVCC) -c HW3.cu -I $(OPENCV_INCLUDEPATH) $(NVCC_OPTS)
 
 loadSaveImage.o: loadSaveImage.cpp loadSaveImage.h
-	g++ -c loadSaveImage.cpp -I $(OPENCV_INCLUDEPATH) $(GCC_OPTS) -I $(CUDA_INCLUDEPATH)
+#	g++ -c loadSaveImage.cpp -I $(OPENCV_INCLUDEPATH) $(GCC_OPTS) -I $(CUDA_INCLUDEPATH)
+	$(NVCC) -c loadSaveImage.cpp -I $(OPENCV_INCLUDEPATH) $(NVCC_OPTS) -I $(CUDA_INCLUDEPATH)
 
 compare.o: compare.cpp compare.h
-	g++ -c compare.cpp -I $(OPENCV_INCLUDEPATH) $(GCC_OPTS) -I $(CUDA_INCLUDEPATH)
+#	g++ -c compare.cpp -I $(OPENCV_INCLUDEPATH) $(GCC_OPTS) -I $(CUDA_INCLUDEPATH)
+	$(NVCC) -c compare.cpp -I $(OPENCV_INCLUDEPATH) $(NVCC_OPTS) -I $(CUDA_INCLUDEPATH)
+
 
 reference_calc.o: reference_calc.cpp reference_calc.h
-	g++ -c reference_calc.cpp -I $(OPENCV_INCLUDEPATH) $(GCC_OPTS) -I $(CUDA_INCLUDEPATH)
+#	g++ -c reference_calc.cpp -I $(OPENCV_INCLUDEPATH) $(GCC_OPTS) -I $(CUDA_INCLUDEPATH)
+	$(NVCC) -c reference_calc.cpp -I $(OPENCV_INCLUDEPATH) $(NVCC_OPTS) -I $(CUDA_INCLUDEPATH)
+
 
 student_func.o: student_func.cu utils.h
 	$(NVCC) -c student_func.cu $(NVCC_OPTS)
