@@ -3,6 +3,8 @@
 # 20161104
 NVCC = nvcc
 NVCC_FLAGS = -std=c++11
+STD_ALGO_FLAGS = -D_MWAITXINTRIN_H_INCLUDED
+
 
 methodobjects  = scans.o
 
@@ -12,7 +14,7 @@ main.exe: main.o $(methodobjects)
 	$(NVCC) $(NVCC_FLAGS) $^ -o $@
 	
 main.o : main.cu $(methodobjects)
-	$(NVCC) $(NVCC_FLAGS) -dc $< -o $@
+	$(NVCC) $(NVCC_FLAGS) $(STD_ALGO_FLAGS) -dc $< -o $@
 
 # Note to budding programmer: for some reason, CUDA C/C++ compiles C++ header files only as 
 # separate objects; otherwise I obtain errors such as the following:

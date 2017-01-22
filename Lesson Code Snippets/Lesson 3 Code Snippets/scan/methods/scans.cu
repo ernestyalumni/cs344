@@ -94,7 +94,7 @@ void Blelloch_scan_kernelLauncher(float* dev_f_in, float* dev_f_out, const int L
 }		
 				
 
-	// Hillis-Steele (inclusive) scan 
+	// Hillis-Steele (exclusive) scan 
 __global__ void HillisSteele_global(float* f_in, float* f_out, const int k, const int L_x) {
 	const int k_x = threadIdx.x + blockDim.x * blockIdx.x;
 	const int offset { 1 << k };
@@ -126,6 +126,8 @@ void HillisSteele_kernelLauncher(float* dev_f_in, float* dev_f_out, const int L_
 		HillisSteele_global<<<N_x, M_in>>>( dev_f_in, dev_f_out, k, L_x) ; 
 		copy_swap<<<N_x,M_in>>>(dev_f_in, dev_f_out,L_x); }	
 }		
+
+
 
 // serial implementations
 
