@@ -3,7 +3,9 @@
 #include "utils.h"
 
 const int BLOCKSIZE	= 128;
-const int NUMBLOCKS = 1000;					// set this to 1 or 2 for debugging
+
+// originally 1000
+const int NUMBLOCKS = 2;					// set this to 1 or 2 for debugging
 const int N 		= BLOCKSIZE*NUMBLOCKS;
 
 /* 
@@ -15,18 +17,79 @@ const int N 		= BLOCKSIZE*NUMBLOCKS;
  *		 - handle intra-block boundaries correctly
  * You can ignore boundary conditions (we ignore the first 2 and last 2 elements)
  */
+ 
+/** 
+ * EY : 20170123 : Compilation tip
+ * nvcc tiling.cu -o tiling.exe
+ * 
+ * */ 
+ 
+ 
 __global__ void foo(float out[], float A[], float B[], float C[], float D[], float E[]){
 
 	int i = threadIdx.x + blockIdx.x*blockDim.x; 
 	
-	out[i] = (A[i] + B[i] + C[i] + D[i] + E[i]) / 5.0f;
+	int sh_i = threadIdx.x;
+	// assume thread blocks of 128 threads
+	const int M_x = 128;
+	__shared__ float sh[M_x*5];
+	
+	// load into shared memory A,B,C,D,E from global, respectively
+	sh[sh_i + 0*M_x] = A[i];
+	sh[sh_i + 1*M_x] = B[i];
+	sh[sh_i + 2*M_x] = C[i];
+	sh[sh_i + 3*M_x] = D[i];
+	sh[sh_i + 4*M_x] = E[i];
+	
+	__syncthreads();
+	
+//	out[i] = (A[i] + B[i] + C[i] + D[i] + E[i]) / 5.0f;
+	out[i] = (sh[sh_i + 0*M_x] + sh[sh_i + 1*M_x] + sh[sh_i + 2*M_x] + sh[sh_i + 3*M_x] + sh[sh_i + 4*M_x])/5.0f;
+
 }
 
-__global__ void bar(float out[], float in[]) 
+__global__ void bar(float out[], float in[], const int N) 
 {
 	int i = threadIdx.x + blockIdx.x*blockDim.x; 
 
-	out[i] = (in[i-2] + in[i-1] + in[i] + in[i+1] + in[i+2]) / 5.0f;
+	// RAD is the "radius" of the stencil we desire; in this case, it's 2
+	const int RAD = 2;
+	
+	int i_x = threadIdx.x;
+//	int l_x = ((i - RAD) >= 0) ? (i-RAD) : 0 ; 
+	// assume thread blocks of 128 threads
+	const int M_x = 128;
+	const int S_x = M_x + 2*RAD;
+	
+	__shared__ float sh[ S_x];
+	for (int ind = i_x; ind < S_x; ind+= M_x) { 
+		int l_x = min( max((ind-RAD) + ((int) blockDim.x*blockIdx.x), 0), N-1);
+		
+		sh[ ind ] = in[ l_x]; }
+
+	if (i >= N) { return; }
+	// ignore the boundaries
+//	if ( (i < 2) || (i >= N-2) ) { return; }
+	
+	__syncthreads();
+	
+	int sh_i = threadIdx.x + RAD;
+	
+/*	float value = 0.f;
+	int stencilindex_x = 0;
+	for (int nu_x = 0; nu_x < 2*RAD+1; nu_x++) {
+		stencilindex_x = sh_i + nu_x -RAD;
+		
+		value += (1.f/5.f)*sh[stencilindex_x] ; 
+	}
+*/
+	float value = (sh[sh_i-2]+sh[sh_i-1]+sh[sh_i]+sh[sh_i+1]+sh[sh_i+2])/5.f;
+
+
+	out[i] = value;
+	
+//	out[i] = (in[i-2] + in[i-1] + in[i] + in[i+1] + in[i+2]) / 5.0f;
+
 }
 
 void cpuFoo(float out[], float A[], float B[], float C[], float D[], float E[])
@@ -91,7 +154,7 @@ int main(int argc, char **argv)
 	fooTimer.Stop();
 	
 	barTimer.Start();
-	bar<<<N/BLOCKSIZE, BLOCKSIZE>>>(d_barOut, d_barIn);
+	bar<<<N/BLOCKSIZE, BLOCKSIZE>>>(d_barOut, d_barIn, N);
 	barTimer.Stop();
 
 	cudaMemcpy(fooOut, d_fooOut, numBytes, cudaMemcpyDeviceToHost);
