@@ -31,7 +31,7 @@ Changes by me (Ernest Yeung)
 
 - *Added* (entirely *new*) Lesson 1 Code Snippets in [Lesson Code Snippets](https://github.com/ernestyalumni/cs344/tree/master/Lesson%20Code%20Snippets)
 - *Most definitive* implementation of **Hillis/Steele** and **Blelloch (i.e. prefix)** scan(s), coded up to CUDA C++11 standards, using global memory, in [Lesson 3 Code Snippets' `scan` subdirectory](https://github.com/ernestyalumni/cs344/tree/master/Lesson%20Code%20Snippets/Lesson%203%20Code%20Snippets/scan).   
-
+- *20170124* All the Problem Sets (1-6) are done and work.  There are many improvements that could be made and ways to "clarify" the code or to make more general, robust, etc.  For instance, for Problem Set 3,4, we could try for a general exclusive scan (Hillis-Steele or Blelloch) that'll work on any size array, not just 1 that'll fit in a single block. 
 
 | codename          | directory                      | Keywords      | Description |
 | ----------------- | :----------------------------- | :-----------: | ----------- | 
@@ -328,3 +328,24 @@ Otherwise, the loop for this code through the cells is very clear in accounting 
 
 (EY: 20161002 Again, this point was resolved in the [forum discussion in Udacity cs344](https://discussions.udacity.com/t/any-one-completed-problem-set-2-using-shared-memory/158442/7), thanks again to [Samuel Lin or Samuel271828](https://discussions.udacity.com/users/Samuel271828) - also see [`CompPhys.pdf`, search for Problem Set 2](https://github.com/ernestyalumni/CompPhys/blob/master/LaTeXandpdfs/CompPhys.pdf)).  
 
+### On *Occupancy*
+
+cf. [Occupancy Part 1](https://classroom.udacity.com/courses/cs344/lessons/109244577/concepts/1118375690923#)
+
+Each SM (streaming multi-processor) has a limited number of
+- thread blocks (so there's a maximum number of thread blocks, e.g. 8)
+- threads (so there's a maximum number of threads, e.g. 1536-2048)
+- registers for all threads (every thread takes a certain number of registers, and there's a maximum number of registers for all the threads, e.g. 65536)
+- bytes of shared memory
+
+[Occupancy Part 2](https://classroom.udacity.com/courses/cs344/lessons/109244577/concepts/1110067030923)
+
+Compile and run `deviceQuery_simplified.exe` (can be found in `Lesson 5 Code Snippets`).  
+
+Take a look at  
+
+- Total amount of shared memory per block    
+- Maximum number of threads per multiprocessor  
+- Maximum number of threads per block  
+
+For Luebke's laptop, it's 49152 bytes, 2048, 1024 respectively, and 65536 total registers available per block.   
