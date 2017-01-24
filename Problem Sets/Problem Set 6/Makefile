@@ -1,5 +1,6 @@
-NVCC=/usr/local/cuda-5.0/bin/nvcc
-#NVCC=nvcc
+# EY : 20170123 I commented out the following 1 line to make it run
+#NVCC=/usr/local/cuda-5.0/bin/nvcc
+NVCC=nvcc
 
 ###################################
 # These are the default install   #
@@ -29,7 +30,9 @@ CUDA_INCLUDEPATH=/usr/local/cuda-5.0/include
 
 #CUDA_INCLUDEPATH=/usr/local/cuda/include
 #CUDA_LIBPATH=/usr/local/cuda/lib
-CUDA_LIBPATH=/usr/local/cuda-5.0/lib64
+
+# EY : 20170120 I commented this out
+# CUDA_LIBPATH=/usr/local/cuda-5.0/lib64
 
 #no warnings otherwise thrust explodes output
 
@@ -41,22 +44,30 @@ student: main.o student_func.o HW6.o loadSaveImage.o compare.o reference_calc.o 
 	$(NVCC) -o HW6 main.o student_func.o HW6.o loadSaveImage.o compare.o reference_calc.o -L $(OPENCV_LIBPATH) $(OPENCV_LIBS) $(NVCC_OPTS)
 
 main.o: main.cpp timer.h utils.h
-	g++ -c main.cpp $(GCC_OPTS) -I $(CUDA_INCLUDEPATH)
+#	g++ -c main.cpp $(GCC_OPTS) -I $(CUDA_INCLUDEPATH)
+	$(NVCC) -c main.cpp $(NVCC_OPTS) -I $(CUDA_INCLUDEPATH)
+
 
 HW6.o: HW6.cu loadSaveImage.h utils.h
 	$(NVCC) -c HW6.cu -I $(OPENCV_INCLUDEPATH) $(NVCC_OPTS)
 
 loadSaveImage.o: loadSaveImage.cpp loadSaveImage.h
-	g++ -c loadSaveImage.cpp -I $(OPENCV_INCLUDEPATH) $(GCC_OPTS) -I $(CUDA_INCLUDEPATH)
+#	g++ -c loadSaveImage.cpp -I $(OPENCV_INCLUDEPATH) $(GCC_OPTS) -I $(CUDA_INCLUDEPATH)
+	$(NVCC) -c loadSaveImage.cpp -I $(OPENCV_INCLUDEPATH) $(NVCC_OPTS) -I $(CUDA_INCLUDEPATH)
+
 
 student_func.o: student_func.cu reference_calc.cpp utils.h
 	$(NVCC) -c student_func.cu $(NVCC_OPTS)
 
 compare.o: compare.cpp compare.h
-	g++ -c compare.cpp -I $(OPENCV_INCLUDEPATH) $(GCC_OPTS) -I $(CUDA_INCLUDEPATH)
+#	g++ -c compare.cpp -I $(OPENCV_INCLUDEPATH) $(GCC_OPTS) -I $(CUDA_INCLUDEPATH)
+	$(NVCC) -c compare.cpp -I $(OPENCV_INCLUDEPATH) $(NVCC_OPTS) -I $(CUDA_INCLUDEPATH)
+
 
 reference_calc.o: reference_calc.cpp reference_calc.h
-	g++ -c reference_calc.cpp -I $(OPENCV_INCLUDEPATH) $(GCC_OPTS) -I $(CUDA_INCLUDEPATH)
+#	g++ -c reference_calc.cpp -I $(OPENCV_INCLUDEPATH) $(GCC_OPTS) -I $(CUDA_INCLUDEPATH)
+	$(NVCC) -c reference_calc.cpp -I $(OPENCV_INCLUDEPATH) $(NVCC_OPTS) -I $(CUDA_INCLUDEPATH)
+
 
 clean:
 	rm -f *.o hw
