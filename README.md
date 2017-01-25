@@ -31,7 +31,8 @@ Changes by me (Ernest Yeung)
 
 - *Added* (entirely *new*) Lesson 1 Code Snippets in [Lesson Code Snippets](https://github.com/ernestyalumni/cs344/tree/master/Lesson%20Code%20Snippets)
 - *Most definitive* implementation of **Hillis/Steele** and **Blelloch (i.e. prefix)** scan(s), coded up to CUDA C++11 standards, using global memory, in [Lesson 3 Code Snippets' `scan` subdirectory](https://github.com/ernestyalumni/cs344/tree/master/Lesson%20Code%20Snippets/Lesson%203%20Code%20Snippets/scan).   
-- *20170124* All the Problem Sets (1-6) are done and work.  There are many improvements that could be made and ways to "clarify" the code or to make more general, robust, etc.  For instance, for Problem Set 3,4, we could try for a general exclusive scan (Hillis-Steele or Blelloch) that'll work on any size array, not just 1 that'll fit in a single block. 
+- *20170124* All the Problem Sets (1-6) are done and work.  There are many improvements that could be made and ways to "clarify" the code or to make more general, robust, etc.  For instance, for Problem Set 3,4, we could try for a general exclusive scan (Hillis-Steele or Blelloch) that'll work on any size array, not just 1 that'll fit in a single block.
+- code examples for **`CUB`** and how to compile code with `CUB` (CUDA *Unbounded*)
 
 | codename          | directory                      | Keywords      | Description |
 | ----------------- | :----------------------------- | :-----------: | ----------- | 
@@ -45,6 +46,8 @@ Changes by me (Ernest Yeung)
 | `reduce_serial_vectors.cpp` | `./Lesson Code Snippets/Lesson 3 Code Snippets/`  | Lesson 3 Code Snippet, reduce, serial, C++11/14, vector, vectors |  [Serial implementation of reduce](https://classroom.udacity.com/courses/cs344/lessons/86719951/concepts/876789040923#), using C++11/14 vector(s) (library); next step I'd take is to write functions, but using templates   |
 | `bitwiserightshift.cpp` | `./Lesson Code Snippets/Lesson 3 Code Snippets/` | Lesson 3 Code Snippet, bitwise right shift, bitwise operator | explanation, exploration of bitwise right shift, bitwise operators |
 | `scan/main.cu`, `scan/methods/scans.cu` | `./Lesson Code Snippets/Lesson 3 Code Snippets/scan/` | Lesson 3 Code Snippet, Hillis/Steele scan, Blelloch (prefix) scan, parallel and serial | Hillis/Steele (inclusive) scan, Blelloch (prefix) (exclusive) scan, each in both parallel and serial implementation, in CUDA C++11 and C++11 with global memory |
+| `example_block_scan_cum.cu` | `./Lesson Code Snippets/Lesson 7 Code Snippets/cub` | `CUB`, `scan`, compilation tips, compile (with `CUB`), `cub/cub.cuh` | I made this Lesson Code 7 snippet work locally - the *big tip* is how to compile; I needed to use the `-I` include flag in this manner: `nvcc -I../cub-1.6.4/ example_block_scan_cum.cu -o example_block_scan_cum.exe` |
+
 
 # Hillis/Steele (inclusive) scan, Blelloch (prefix; exclusive) scan(s)
 
@@ -348,4 +351,22 @@ Take a look at
 - Maximum number of threads per multiprocessor  
 - Maximum number of threads per block  
 
-For Luebke's laptop, it's 49152 bytes, 2048, 1024 respectively, and 65536 total registers available per block.   
+For Luebke's laptop, it's 49152 bytes, 2048, 1024 respectively, and 65536 total registers available per block.
+
+# `CUB` (CUDA *Unbounded*)
+
+## Compilation tip
+
+Here's what I did, on a GeForce GTX 980 Ti.  
+I wanted to include the cub library, which is in a separate folder (I downloaded, unzipped).  
+But it's not symbolically linked from root (I REALLY don't want to mess with root directory right now).   
+So I put the folder (straight downloaded from the internet) into a desired, arbitrary location -     
+  in this case, I put it in `../` so that it's `../cub-1.6.4/`    
+
+Then I used the include flag `-I` in the following manner:    
+```
+	nvcc -I../cub-1.6.4/ example_block_scan_cum.cu -o example_block_Scan_cum.exe   
+```
+ 
+   Also note that I was on a GeForce GTX 980 Ti and CUDA Toolkit 8.0 with latest drivers, and so for my case, Compute or SM requirements was (very much) met.
+

@@ -33,6 +33,18 @@
  *
  * nvcc example_block_scan_sum.cu -gencode=arch=compute_20,code=\"sm_20,compute_20\" -o example_block_scan_sum
  *
+ * EY : 20170125
+ * But here's what I did, on a GeForce GTX 980 Ti
+ * I wanted to include the cub library, which is in a separate folder (I downloaded, unzipped)
+ * but it's not symbolically linked from root (I REALLY don't want to mess with root directory right now).
+ * so I put the folder (straight downloaded from the internet) into a desired, arbitrary location;
+ * in this case, I put it in `../` so that it's `../cub-1.6.4/`
+ * Then I used the include flag -I
+ * in the following manner:
+ * nvcc -I../cub-1.6.4/ example_block_scan_cum.cu -o example_block_Scan_cum.exe
+ * 
+ * Also note that I was on a GeForce GTX 980 Ti and CUDA Toolkit 8.0 with latest drivers, and so 
+ * for my case, Compute or SM requirements was (very much) met
  ******************************************************************************/
 
 // Ensure printing of CUDA runtime errors to console (define before including cub.h)
